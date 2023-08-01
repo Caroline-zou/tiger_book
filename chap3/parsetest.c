@@ -15,5 +15,13 @@ void parse(string fname)
 int main(int argc, char **argv) {
  if (argc!=2) {fprintf(stderr,"usage: a.out filename\n"); exit(1);}
  parse(argv[1]);
+ /*char fname[65];
+
+ for(int i = 1; i <= 49; ++i) {
+   sprintf(fname, "../testcases/test%d.tig", i);
+   parse(fname);
+ }*/
+
  return 0;
 }
+

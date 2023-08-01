@@ -21,6 +21,18 @@ string String(char *s)
  return p;
 }
 
+// 为一个 string 串最后添加一个 char 字符
+string stringAppendChar(string str, char ch)
+{   int stringLen = strlen(str);
+    string dst = checked_malloc(stringLen+2);
+    strcpy(dst, str);
+    dst[stringLen] = ch;
+    dst[stringLen+1] = '\0';
+    free(str);
+    return dst;
+}
+
+
 U_boolList U_BoolList(bool head, U_boolList tail)
 { U_boolList list = checked_malloc(sizeof(*list));
   list->head = head;

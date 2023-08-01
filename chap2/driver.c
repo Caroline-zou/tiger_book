@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "util.h"
 #include "errormsg.h"
 #include "tokens.h"
@@ -29,7 +30,7 @@ int main(int argc, char **argv) {
  fname=argv[1];
  EM_reset(fname);
  for(;;) {
-   tok=yylex();
+   tok=yylex(); //调用一次yylex() 获取一个单词token
    if (tok==0) break;
    switch(tok) {
    case ID: case STRING:

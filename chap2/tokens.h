@@ -1,7 +1,15 @@
+/*
+tokens.h Definition of lexical-token constants, and yylval.
+*/
+
+
+#ifndef TOKENS_H_
+#define TOKENS_H_
+
 typedef union  {
 	int pos;
-	int ival;
-	string sval;
+	int ival; //整数
+	string sval; //字符串值
 	} YYSTYPE;
 extern YYSTYPE yylval;
 
@@ -49,3 +57,5 @@ extern YYSTYPE yylval;
 # define VAR 298
 # define TYPE 299
 
+
+#endif

@@ -28,16 +28,129 @@ void yyerror(char *s)
   AND OR ASSIGN
   ARRAY IF THEN ELSE WHILE FOR TO DO LET IN END OF 
   BREAK NIL
-  FUNCTION VAR TYPE 
+  FUNCTION VAR TYPE UMINUS
 
 %start program
+%nonassoc ASSIGN
+%nonassoc TYPE FUNCTION // in order to remove shift-reduce conflicts when
+// matching token TYPE and FUNCTION 
+%left OR
+%left AND
+%nonassoc EQ NEQ LT LE GT GE
+%left PLUS MINUS
+%left TIMES DIVIDE
+%left UMINUS
 
 %%
 
-program:	exp
+program: exp
+       ;
 
-exp:   ID
+exp: lvalue 
+   //| LPAREN RPAREN
+   | NIL
+   //| LPAREN exp SEMICOLON exp expseq1 RPAREN  
+   | INT
+   | STRING
+   | MINUS exp %prec UMINUS
+   | funcall
+   | exp PLUS exp
+   | exp MINUS exp
+   | exp TIMES exp
+   | exp DIVIDE exp
+   | exp EQ exp
+   | exp NEQ exp
+   | exp LT exp
+   | exp LE exp
+   | exp GT exp
+   | exp GE exp
+   | exp AND exp
+   | exp OR exp 
+   | ID LBRACE recordarg RBRACE
+   | ID LBRACK exp RBRACK OF exp %prec ASSIGN
+   | lvalue ASSIGN exp
+   | IF exp THEN exp ELSE exp %prec ASSIGN
+   | IF exp THEN exp %prec ASSIGN
+   | WHILE exp DO exp %prec ASSIGN
+   | FOR ID ASSIGN exp TO exp DO exp %prec ASSIGN
+   | BREAK
+   | LET decs IN expseq END
+   //| LPAREN exp RPAREN
+   | LPAREN expseq RPAREN
+   ;
 
+decs: dec decs
+    | /* empty */
+    ;
 
+dec: tydec
+   | vardec
+   | fundec
+   ;
 
-	
+tydec: TYPE ID EQ ty tydec1
+     ;
+
+tydec1: TYPE ID EQ ty tydec1
+     | %prec ASSIGN /* empty */ 
+     ; /* in order to  recursive type */
+
+ty: ID
+  | LBRACE tyfields RBRACE
+  | ARRAY OF ID
+  ;
+
+tyfields: ID COLON ID tyfields1
+        | /* empty */
+        ;
+
+tyfields1: COMMA ID COLON ID tyfields1
+         | /* empty */
+         ;
+
+vardec: VAR ID ASSIGN exp
+      | VAR ID COLON ID ASSIGN exp
+      ;
+
+fundec: FUNCTION ID LPAREN tyfields RPAREN EQ exp fundec1
+      | FUNCTION ID LPAREN tyfields RPAREN COLON ID EQ exp fundec1
+      ;
+
+fundec1: FUNCTION ID LPAREN tyfields RPAREN EQ exp fundec1
+      | FUNCTION ID LPAREN tyfields RPAREN COLON ID EQ exp fundec1
+      | %prec ASSIGN /* empty */
+      ; /* in order to mutually recursive */
+
+lvalue: ID
+      | lvalue DOT ID
+      | lvalue LBRACK exp RBRACK
+      | ID LBRACK exp RBRACK // a seemingly redundant grammar rule to
+// handle the confusion about "variable [exp]" and "type-id [exp] of exp"
+      ;
+
+expseq: exp expseq1
+      | /* empty */
+      ;
+
+expseq1: SEMICOLON exp expseq1
+       | /* empty */
+       ;
+
+funcall: ID LPAREN RPAREN
+       | ID LPAREN callarg RPAREN
+       ;
+
+callarg: exp callarg1
+       ;
+
+callarg1: COMMA exp callarg1
+        | /* empty */
+        ;
+ 
+recordarg: ID EQ exp recordarg1
+         | /* empty */
+         ;
+
+recordarg1: COMMA ID EQ exp recordarg1
+          | /* empty */
+          ;

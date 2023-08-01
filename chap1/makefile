@@ -1,5 +1,5 @@
-a.out: main.o prog1.o slp.o util.o
-	cc -g main.o prog1.o slp.o util.o
+a.out: main.o prog1.o slp.o util.o maxargs.o
+	cc -g main.o prog1.o slp.o util.o maxargs.o
 
 main.o: main.c slp.h util.h
 	cc -g -c main.c
@@ -12,6 +12,9 @@ slp.o: slp.c slp.h util.h
 
 util.o: util.c util.h
 	cc -g -c util.c
+
+maxargs.o: maxargs.c maxargs.h slp.h util.h
+	cc -g -c maxargs.c
 
 clean: 
 	rm -f a.out util.o prog1.o slp.o main.o
