@@ -5,15 +5,8 @@
 
 #include <stdio.h>
 #include "util.h"
-#include "symbol.h"
-#include "temp.h"
-#include "tree.h"
-#include "absyn.h"
-#include "assem.h"
-#include "frame.h"
-#include "graph.h"
-#include "errormsg.h"
 #include "table.h"
+#include "graph.h"
 
 struct G_graph_ {int nodecount;
 		 G_nodeList mynodes, mylast;
@@ -147,9 +140,12 @@ static G_nodeList cat(G_nodeList a, G_nodeList b) {
  * predecessor lists of node n */
 G_nodeList G_adj(G_node n) {return cat(G_succ(n), G_pred(n));}
 
-void *G_nodeInfo(G_node n) {return n->info;}
+void *G_getNodeInfo(G_node n) {return n->info;}
 
-
+void G_setNodeInfo(G_node n, void *info) {
+	assert(n);
+	n->info = info;
+}
 
 /* G_node table functions */
 

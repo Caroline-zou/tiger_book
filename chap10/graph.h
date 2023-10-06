@@ -49,7 +49,10 @@ int G_degree(G_node n);
 G_nodeList G_adj(G_node n);
 
 /* Get the "info" associated with node "n" */
-void *G_nodeInfo(G_node n);
+void *G_getNodeInfo(G_node n);
+
+/* Set the "info" field of node "n" */
+void G_setNodeInfo(G_node n, void *info);
 
 /* The type of "tables" mapping graph-nodes to information */
 typedef struct TAB_table_  *G_table;
